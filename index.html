@@ -1,0 +1,2758 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Local Emergency Hub - Emergency reporting and local response prototype">
+<title>Local Emergency Hub</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --red: #dc2626;
+        --dark-red: #991b1b;
+        --blue: #2563eb;
+        --dark-blue: #172554;
+        --green: #16a34a;
+        --orange: #ea580c;
+        --yellow: #f59e0b;
+        --dark: #0f172a;
+        --gray: #64748b;
+        --light: #f8fafc;
+        --border: #e2e8f0;
+        --white: #ffffff;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f1f5f9;
+        color: var(--dark);
+        line-height: 1.6;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    /* ================= HEADER ================= */
+
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.97);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    }
+
+    .navbar {
+        max-width: 1400px;
+        margin: auto;
+        min-height: 72px;
+        padding: 0 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        white-space: nowrap;
+    }
+
+    .logo-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: var(--red);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 22px;
+        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
+    }
+
+    nav {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    nav a {
+        text-decoration: none;
+        color: #475569;
+        padding: 9px 13px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    nav a:hover {
+        color: var(--red);
+        background: #fef2f2;
+    }
+
+    .system-status {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--green);
+        white-space: nowrap;
+    }
+
+    .status-dot {
+        width: 9px;
+        height: 9px;
+        background: var(--green);
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px #dcfce7;
+    }
+
+    /* ================= HERO ================= */
+
+    .hero {
+        background:
+            radial-gradient(circle at 80% 20%, rgba(59,130,246,0.22), transparent 30%),
+            linear-gradient(135deg, #0f172a, #172554 60%, #1e3a8a);
+        color: white;
+        padding: 75px 25px;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        max-width: 1200px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1.5fr 0.8fr;
+        gap: 50px;
+        align-items: center;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 7px 13px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.5rem, 5vw, 4.7rem);
+        line-height: 1.05;
+        margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+        color: #f87171;
+    }
+
+    .hero p {
+        color: #cbd5e1;
+        font-size: 1.1rem;
+        max-width: 650px;
+        margin-bottom: 28px;
+    }
+
+    .hero-flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .flow-item {
+        padding: 8px 13px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.1);
+        font-size: 0.85rem;
+    }
+
+    .sos-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sos-button {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        border: 12px solid rgba(255,255,255,0.12);
+        background: linear-gradient(145deg, #ef4444, #991b1b);
+        color: white;
+        font-size: 3rem;
+        font-weight: 900;
+        box-shadow:
+            0 0 0 15px rgba(239,68,68,0.12),
+            0 20px 60px rgba(0,0,0,0.4);
+        transition: 0.25s;
+    }
+
+    .sos-button:hover {
+        transform: scale(1.04);
+    }
+
+    .sos-button:active {
+        transform: scale(0.97);
+    }
+
+    .sos-label {
+        text-align: center;
+        color: #cbd5e1;
+        margin-top: 20px;
+        font-size: 0.85rem;
+    }
+
+    /* ================= GENERAL ================= */
+
+    .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 70px 25px;
+    }
+
+    .section-header {
+        margin-bottom: 30px;
+    }
+
+    .section-tag {
+        color: var(--red);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-bottom: 7px;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+        margin-bottom: 7px;
+    }
+
+    .section-header p {
+        color: var(--gray);
+    }
+
+    .grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+    }
+
+    /* ================= QUICK ACTIONS ================= */
+
+    .quick-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .quick-action {
+        padding: 22px;
+        border-radius: 15px;
+        background: white;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: 0.2s;
+        text-align: left;
+    }
+
+    .quick-action:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+        border-color: #fecaca;
+    }
+
+    .quick-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fef2f2;
+        font-size: 22px;
+    }
+
+    .quick-action strong {
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .quick-action span {
+        font-size: 0.78rem;
+        color: var(--gray);
+    }
+
+    /* ================= LOCATION ================= */
+
+    .location-card {
+        padding: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .location-info {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .location-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 15px;
+        background: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 25px;
+    }
+
+    .location-info h3 {
+        margin-bottom: 3px;
+    }
+
+    .coordinates {
+        color: var(--gray);
+        font-size: 0.85rem;
+    }
+
+    .location-success {
+        color: var(--green);
+        font-weight: 700;
+        font-size: 0.8rem;
+        margin-top: 3px;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 18px;
+        font-weight: 700;
+        transition: 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--blue);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .btn-danger {
+        background: var(--red);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: var(--dark-red);
+    }
+
+    .btn-outline {
+        background: white;
+        border: 1px solid var(--border);
+        color: var(--dark);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+    }
+
+    /* ================= SERVICES ================= */
+
+    .services-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .service-card {
+        padding: 25px;
+        text-align: center;
+        transition: 0.25s;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .service-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        background: #fef2f2;
+    }
+
+    .service-card p {
+        color: var(--gray);
+        font-size: 0.83rem;
+        min-height: 42px;
+        margin: 5px 0 18px;
+    }
+
+    .call-btn {
+        display: block;
+        text-decoration: none;
+        padding: 10px;
+        background: #fef2f2;
+        color: var(--red);
+        border-radius: 9px;
+        font-size: 0.85rem;
+        font-weight: 800;
+    }
+
+    /* ================= REPORT FORM ================= */
+
+    .report-layout {
+        display: grid;
+        grid-template-columns: 1fr 0.38fr;
+        gap: 25px;
+    }
+
+    .form-card {
+        padding: 30px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 12px;
+        outline: none;
+        background: white;
+        transition: 0.2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .demo-notice {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        border-radius: 10px;
+        padding: 13px;
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+    }
+
+    .backend-card {
+        padding: 25px;
+        background: linear-gradient(145deg, #172554, #1e3a8a);
+        color: white;
+        height: fit-content;
+    }
+
+    .backend-card p {
+        color: #bfdbfe;
+        font-size: 0.85rem;
+        margin-top: 10px;
+    }
+
+    .backend-list {
+        margin-top: 20px;
+        list-style: none;
+    }
+
+    .backend-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.83rem;
+    }
+
+    /* ================= MAP ================= */
+
+    .map {
+        height: 470px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        background-color: #dbeafe;
+        background-image:
+            linear-gradient(30deg, transparent 45%, rgba(100,116,139,0.25) 46%, rgba(100,116,139,0.25) 48%, transparent 49%),
+            linear-gradient(120deg, transparent 45%, rgba(100,116,139,0.2) 46%, rgba(100,116,139,0.2) 48%, transparent 49%);
+        background-size: 120px 120px;
+        border: 8px solid white;
+        box-shadow: var(--shadow);
+    }
+
+    .map::before {
+        content: "";
+        position: absolute;
+        width: 80%;
+        height: 35px;
+        background: #93c5fd;
+        border-radius: 50%;
+        transform: rotate(-20deg);
+        top: 35%;
+        left: 10%;
+        opacity: 0.6;
+    }
+
+    .road {
+        position: absolute;
+        height: 10px;
+        background: #94a3b8;
+        border: 2px solid white;
+        transform: rotate(25deg);
+        width: 100%;
+    }
+
+    .road.one {
+        top: 30%;
+        left: -5%;
+    }
+
+    .road.two {
+        top: 65%;
+        transform: rotate(-15deg);
+    }
+
+    .map-label {
+        position: absolute;
+        font-size: 12px;
+        font-weight: 800;
+        color: #475569;
+        background: rgba(255,255,255,0.8);
+        padding: 4px 8px;
+        border-radius: 5px;
+    }
+
+    .marker {
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        border: 3px solid white;
+        box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+        z-index: 5;
+    }
+
+    .marker span {
+        transform: rotate(45deg);
+    }
+
+    .critical {
+        background: var(--red);
+    }
+
+    .warning {
+        background: var(--orange);
+    }
+
+    .resolved {
+        background: var(--green);
+    }
+
+    .medical {
+        background: var(--blue);
+    }
+
+    .marker-popup {
+        display: none;
+        position: absolute;
+        min-width: 220px;
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        z-index: 20;
+        font-size: 0.82rem;
+    }
+
+    .marker-popup.active {
+        display: block;
+    }
+
+    .marker-popup strong {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .legend {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background: rgba(255,255,255,0.95);
+        padding: 12px;
+        border-radius: 10px;
+        z-index: 10;
+        box-shadow: var(--shadow);
+    }
+
+    .legend div {
+        font-size: 0.75rem;
+        margin: 4px 0;
+    }
+
+    .legend i {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    /* ================= ALERTS ================= */
+
+    .alerts-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .alert {
+        padding: 18px;
+        border-radius: 12px;
+        display: grid;
+        grid-template-columns: 45px 1fr auto;
+        align-items: center;
+        gap: 15px;
+        border-left: 5px solid;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    }
+
+    .alert.critical-alert {
+        border-color: var(--red);
+        background: #fff7f7;
+    }
+
+    .alert.warning-alert {
+        border-color: var(--orange);
+        background: #fffaf5;
+    }
+
+    .alert.info-alert {
+        border-color: var(--blue);
+        background: #f5f9ff;
+    }
+
+    .alert-icon {
+        font-size: 25px;
+    }
+
+    .alert h4 {
+        margin-bottom: 3px;
+    }
+
+    .alert p {
+        color: var(--gray);
+        font-size: 0.8rem;
+    }
+
+    .alert-time {
+        font-size: 0.72rem;
+        color: var(--gray);
+        text-align: right;
+    }
+
+    /* ================= INCIDENTS ================= */
+
+    .filter-bar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .filter-btn {
+        border: 1px solid var(--border);
+        background: white;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .filter-btn.active {
+        background: var(--dark);
+        color: white;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 750px;
+    }
+
+    th,
+    td {
+        text-align: left;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.82rem;
+    }
+
+    th {
+        background: #f8fafc;
+        color: #475569;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 800;
+    }
+
+    .badge-critical {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-high {
+        background: #ffedd5;
+        color: #9a3412;
+    }
+
+    .badge-medium {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-low {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-active {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-resolved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    /* ================= DASHBOARD ================= */
+
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-card {
+        padding: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        right: -25px;
+        top: -25px;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .stat-value {
+        font-size: 2.1rem;
+        font-weight: 900;
+        margin-top: 5px;
+    }
+
+    .demo-label {
+        display: inline-block;
+        margin-top: 8px;
+        color: var(--orange);
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    /* ================= FOOTER ================= */
+
+    footer {
+        background: #0f172a;
+        color: white;
+        padding: 45px 25px;
+        margin-top: 30px;
+    }
+
+    .footer-inner {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    footer p {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        margin-top: 5px;
+    }
+
+    /* ================= MODAL ================= */
+
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.7);
+        backdrop-filter: blur(4px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        padding: 20px;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal {
+        width: min(500px, 100%);
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+        animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+        from {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .modal-icon {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+    .modal h3 {
+        margin-bottom: 8px;
+    }
+
+    .modal p {
+        color: var(--gray);
+        font-size: 0.88rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+    }
+
+    /* ================= TOAST ================= */
+
+    .toast-container {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 3000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .toast {
+        background: #0f172a;
+        color: white;
+        padding: 14px 18px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        min-width: 270px;
+        font-size: 0.82rem;
+        animation: toastIn 0.25s ease;
+    }
+
+    .toast.success {
+        border-left: 4px solid var(--green);
+    }
+
+    .toast.error {
+        border-left: 4px solid var(--red);
+    }
+
+    @keyframes toastIn {
+        from {
+            transform: translateX(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 1100px) {
+        .services-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .quick-grid,
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 850px) {
+        nav {
+            display: none;
+        }
+
+        .hero-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .hero p {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-flow {
+            justify-content: center;
+        }
+
+        .report-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sos-button {
+            width: 180px;
+            height: 180px;
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .navbar {
+            padding: 0 15px;
+        }
+
+        .system-status {
+            display: none;
+        }
+
+        .container {
+            padding: 50px 15px;
+        }
+
+        .hero {
+            padding: 55px 15px;
+        }
+
+        .services-grid,
+        .quick-grid,
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .location-card {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .alert {
+            grid-template-columns: 35px 1fr;
+        }
+
+        .alert-time {
+            grid-column: 2;
+            text-align: left;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header>
+    <div class="navbar">
+
+        <div class="logo">
+            <div class="logo-icon">🚨</div>
+            <span>Local Emergency Hub</span>
+        </div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#report">Report Emergency</a>
+            <a href="#services">Emergency Services</a>
+            <a href="#map">Incident Map</a>
+            <a href="#alerts">Alerts</a>
+        </nav>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            System Online
+        </div>
+
+    </div>
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div>
+
+            <div class="hero-badge">
+                🛡️ LOCAL EMERGENCY RESPONSE PROTOTYPE
+            </div>
+
+            <h1>
+                One Hub.<br>
+                <span>Faster Emergency</span> Response.
+            </h1>
+
+            <p>
+                Report emergencies, share your location, and connect
+                with nearby emergency services from one centralized platform.
+            </p>
+
+            <div class="hero-flow">
+                <div class="flow-item">🚨 Emergency</div>
+                <div class="flow-item">→</div>
+                <div class="flow-item">📍 Location</div>
+                <div class="flow-item">→</div>
+                <div class="flow-item">📋 Report</div>
+                <div class="flow-item">→</div>
+                <div class="flow-item">🚑 Response</div>
+            </div>
+
+            <button class="btn btn-primary" onclick="scrollToSection('report')">
+                Report an Emergency
+            </button>
+
+        </div>
+
+        <div class="sos-container">
+
+            <div>
+
+                <button class="sos-button" onclick="openSOSModal()">
+                    SOS
+                </button>
+
+                <div class="sos-label">
+                    Press only during an emergency
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= QUICK ACTIONS ================= -->
+
+<section class="container">
+
+    <div class="section-header">
+        <div class="section-tag">Quick Access</div>
+        <h2>Emergency Actions</h2>
+        <p>Access critical features with one click.</p>
+    </div>
+
+    <div class="grid quick-grid">
+
+        <button class="quick-action" onclick="scrollToSection('report')">
+            <div class="quick-icon">🚨</div>
+            <div>
+                <strong>Report Emergency</strong>
+                <span>Submit an incident</span>
+            </div>
+        </button>
+
+        <button class="quick-action" onclick="getLocation()">
+            <div class="quick-icon">📍</div>
+            <div>
+                <strong>Share Location</strong>
+                <span>Capture your position</span>
+            </div>
+        </button>
+
+        <button class="quick-action" onclick="scrollToSection('services')">
+            <div class="quick-icon">📞</div>
+            <div>
+                <strong>Emergency Contacts</strong>
+                <span>Call emergency services</span>
+            </div>
+        </button>
+
+        <button class="quick-action" onclick="scrollToSection('alerts')">
+            <div class="quick-icon">⚠️</div>
+            <div>
+                <strong>View Alerts</strong>
+                <span>Check local warnings</span>
+            </div>
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= LOCATION ================= -->
+
+<section class="container" style="padding-top:0;">
+
+    <div class="card location-card">
+
+        <div class="location-info">
+
+            <div class="location-icon">📍</div>
+
+            <div>
+                <h3>Your Current Location</h3>
+
+                <div class="coordinates" id="locationText">
+                    Location not detected
+                </div>
+
+                <div class="location-success" id="locationStatus"></div>
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="getLocation()">
+            📍 Get My Location
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= SERVICES ================= -->
+
+<section class="container" id="services">
+
+    <div class="section-header">
+        <div class="section-tag">Emergency Services</div>
+        <h2>Get Help Quickly</h2>
+        <p>Use these emergency contacts when immediate assistance is required.</p>
+    </div>
+
+    <div class="grid services-grid">
+
+        <div class="card service-card">
+            <div class="service-icon">🚑</div>
+            <h3>Ambulance</h3>
+            <p>Emergency medical assistance</p>
+            <a class="call-btn" href="tel:108">📞 Call 108</a>
+        </div>
+
+        <div class="card service-card">
+            <div class="service-icon">👮</div>
+            <h3>Police</h3>
+            <p>Police and public safety</p>
+            <a class="call-btn" href="tel:112">📞 Call 112</a>
+        </div>
+
+        <div class="card service-card">
+            <div class="service-icon">🚒</div>
+            <h3>Fire & Rescue</h3>
+            <p>Fire and rescue emergencies</p>
+            <a class="call-btn" href="tel:112">📞 Call 112</a>
+        </div>
+
+        <div class="card service-card">
+            <div class="service-icon">🏥</div>
+            <h3>Hospital</h3>
+            <p>Nearby medical assistance</p>
+            <button class="call-btn" onclick="showToast('Hospital finder is a prototype feature.', 'success')">
+                🏥 Find Hospital
+            </button>
+        </div>
+
+        <div class="card service-card">
+            <div class="service-icon">🚨</div>
+            <h3>Emergency Helpline</h3>
+            <p>General emergency assistance</p>
+            <a class="call-btn" href="tel:112">📞 Call 112</a>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= REPORT ================= -->
+
+<section class="container" id="report">
+
+    <div class="section-header">
+        <div class="section-tag">Emergency Reporting</div>
+        <h2>Report an Emergency</h2>
+        <p>Provide essential information so an incident can be recorded.</p>
+    </div>
+
+    <div class="report-layout">
+
+        <div class="card form-card">
+
+            <div class="demo-notice">
+                ⚠️ <strong>Prototype:</strong>
+                Submitted reports are stored locally in this browser only.
+                No real emergency center is contacted.
+            </div>
+
+            <form id="emergencyForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="emergencyType">Emergency Type *</label>
+
+                        <select id="emergencyType" required>
+                            <option value="">Select emergency</option>
+                            <option>Road Accident</option>
+                            <option>Fire</option>
+                            <option>Medical Emergency</option>
+                            <option>Crime</option>
+                            <option>Flood</option>
+                            <option>Landslide</option>
+                            <option>Missing Person</option>
+                            <option>Other</option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="severity">Severity *</label>
+
+                        <select id="severity" required>
+                            <option value="">Select severity</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Critical</option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="reportLocation">Location *</label>
+
+                        <input
+                            type="text"
+                            id="reportLocation"
+                            placeholder="Example: Main Junction, Kollam"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="description">Description *</label>
+
+                        <textarea
+                            id="description"
+                            placeholder="Describe what happened..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="people">Number of People Affected *</label>
+
+                        <input
+                            type="number"
+                            id="people"
+                            min="1"
+                            placeholder="Example: 3"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reporter">Reporter Name (Optional)</label>
+
+                        <input
+                            type="text"
+                            id="reporter"
+                            placeholder="Your name"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number (Optional)</label>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            placeholder="Your phone number"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline"
+                        onclick="useFormLocation()">
+                        📍 Use My Current Location
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger">
+                        🚨 Submit Emergency Report
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <div class="card backend-card">
+
+            <h3>⚙️ Prototype Architecture</h3>
+
+            <p>
+                This demonstration represents the citizen-facing
+                emergency reporting layer.
+            </p>
+
+            <ul class="backend-list">
+                <li>✓ Location Capture</li>
+                <li>✓ Incident Creation</li>
+                <li>✓ Local Incident Storage</li>
+                <li>✓ Emergency Classification</li>
+                <li>✓ Incident Dashboard</li>
+                <li>✓ Alert Visualization</li>
+                <li>→ Backend Integration Planned</li>
+                <li>→ Real-time APIs Planned</li>
+                <li>→ Authority Integration Planned</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MAP ================= -->
+
+<section class="container" id="map">
+
+    <div class="section-header">
+        <div class="section-tag">Situational Awareness</div>
+        <h2>Local Incident Map</h2>
+        <p>Interactive demonstration map showing example emergency locations.</p>
+    </div>
+
+    <div class="map" id="incidentMap">
+
+        <div class="road one"></div>
+        <div class="road two"></div>
+
+        <div class="map-label" style="top:12%;left:15%;">
+            Railway Station
+        </div>
+
+        <div class="map-label" style="top:60%;left:68%;">
+            Market Area
+        </div>
+
+        <div class="map-label" style="top:78%;left:25%;">
+            Main Junction
+        </div>
+
+        <div class="map-label" style="top:25%;left:65%;">
+            Highway
+        </div>
+
+
+        <div
+            class="marker critical"
+            style="top:27%;left:32%;"
+            onclick="showMarker(this, 'Road Accident', 'Main Junction', 'Critical', 'Active')">
+            <span>🚑</span>
+        </div>
+
+        <div
+            class="marker warning"
+            style="top:52%;left:60%;"
+            onclick="showMarker(this, 'Fire', 'Market Area', 'High', 'Active')">
+            <span>🔥</span>
+        </div>
+
+        <div
+            class="marker medical"
+            style="top:20%;left:75%;"
+            onclick="showMarker(this, 'Medical Emergency', 'Railway Station', 'Medium', 'Response Monitoring')">
+            <span>🏥</span>
+        </div>
+
+        <div
+            class="marker warning"
+            style="top:70%;left:40%;"
+            onclick="showMarker(this, 'Flood', 'Residential Area', 'High', 'Monitoring')">
+            <span>🌊</span>
+        </div>
+
+        <div
+            class="marker resolved"
+            style="top:40%;left:18%;"
+            onclick="showMarker(this, 'Hazard', 'Highway', 'Low', 'Resolved')">
+            <span>⚠️</span>
+        </div>
+
+        <div class="marker-popup" id="markerPopup"></div>
+
+
+        <div class="legend">
+
+            <strong style="font-size:0.8rem;">Legend</strong>
+
+            <div>
+                <i style="background:#dc2626;"></i>
+                Critical
+            </div>
+
+            <div>
+                <i style="background:#ea580c;"></i>
+                Warning
+            </div>
+
+            <div>
+                <i style="background:#16a34a;"></i>
+                Resolved
+            </div>
+
+            <div>
+                <i style="background:#2563eb;"></i>
+                Medical
+            </div>
+
+        </div>
+
+    </div>
+
+    <p style="margin-top:10px;color:#64748b;font-size:0.75rem;">
+        ⚠️ Demo map only — not connected to a live mapping service.
+    </p>
+
+</section>
+
+
+<!-- ================= ALERTS ================= -->
+
+<section class="container" id="alerts">
+
+    <div class="section-header">
+        <div class="section-tag">Local Alerts</div>
+        <h2>Emergency Alerts</h2>
+        <p>Example alerts displayed for demonstration purposes.</p>
+    </div>
+
+    <div class="alerts-grid">
+
+        <div class="alert critical-alert">
+
+            <div class="alert-icon">🔥</div>
+
+            <div>
+                <h4>Fire emergency reported</h4>
+                <p>
+                    Market Area • Severity: Critical •
+                    Demo Data
+                </p>
+            </div>
+
+            <div class="alert-time">
+                18:42
+            </div>
+
+        </div>
+
+
+        <div class="alert warning-alert">
+
+            <div class="alert-icon">⚠️</div>
+
+            <div>
+                <h4>Heavy rainfall reported in nearby areas</h4>
+                <p>
+                    Kollam • Severity: Warning •
+                    Demo Data
+                </p>
+            </div>
+
+            <div class="alert-time">
+                18:30
+            </div>
+
+        </div>
+
+
+        <div class="alert info-alert">
+
+            <div class="alert-icon">🚧</div>
+
+            <div>
+                <h4>Traffic disruption reported</h4>
+                <p>
+                    Main Junction • Severity: Information •
+                    Demo Data
+                </p>
+            </div>
+
+            <div class="alert-time">
+                18:12
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= INCIDENTS ================= -->
+
+<section class="container" id="incidents">
+
+    <div class="section-header">
+        <div class="section-tag">Incident Management</div>
+        <h2>Recent Incidents</h2>
+        <p>Prototype incident records and locally submitted reports.</p>
+    </div>
+
+    <div class="filter-bar">
+
+        <button class="filter-btn active" onclick="filterIncidents('all', this)">
+            All
+        </button>
+
+        <button class="filter-btn" onclick="filterIncidents('Critical', this)">
+            Critical
+        </button>
+
+        <button class="filter-btn" onclick="filterIncidents('Active', this)">
+            Active
+        </button>
+
+        <button class="filter-btn" onclick="filterIncidents('Resolved', this)">
+            Resolved
+        </button>
+
+    </div>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Incident ID</th>
+                    <th>Emergency</th>
+                    <th>Location</th>
+                    <th>Time</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="incidentTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<section class="container">
+
+    <div class="section-header">
+        <div class="section-tag">Response Dashboard</div>
+        <h2>Emergency Response Status</h2>
+        <p>Prototype metrics for hackathon demonstration.</p>
+    </div>
+
+    <div class="grid stats-grid">
+
+        <div class="card stat-card">
+            <div class="stat-label">Active Emergencies</div>
+            <div class="stat-value">3</div>
+            <div class="demo-label">Prototype / Demonstration Data</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-label">Responders Available</div>
+            <div class="stat-value">12</div>
+            <div class="demo-label">Prototype / Demonstration Data</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-label">Resolved Today</div>
+            <div class="stat-value">18</div>
+            <div class="demo-label">Prototype / Demonstration Data</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-label">Response Status</div>
+            <div class="stat-value" style="font-size:1.5rem;">
+                Monitoring
+            </div>
+            <div class="demo-label">Prototype / Demonstration Data</div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="footer-inner">
+
+        <div>
+            <h3>🚨 Local Emergency Hub</h3>
+
+            <p>
+                Connecting citizens with emergency response services.
+            </p>
+        </div>
+
+        <div>
+            <p>
+                Prototype developed for Hackathon Demonstration
+            </p>
+
+            <p>
+                Frontend-only demonstration • Demo Data
+            </p>
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- ================= SOS MODAL ================= -->
+
+<div class="modal-overlay" id="sosModal">
+
+    <div class="modal">
+
+        <div class="modal-icon">🚨</div>
+
+        <h3>Activate SOS?</h3>
+
+        <p>
+            This will attempt to capture your current location.
+            This prototype does not contact police, ambulance,
+            fire services, or an emergency control room.
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                class="btn btn-outline"
+                onclick="closeModal('sosModal')">
+                Cancel
+            </button>
+
+            <button
+                class="btn btn-danger"
+                onclick="activateSOS()">
+                Confirm SOS
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= REPORT CONFIRMATION MODAL ================= -->
+
+<div class="modal-overlay" id="reportModal">
+
+    <div class="modal">
+
+        <div class="modal-icon">📋</div>
+
+        <h3>Emergency Report Created</h3>
+
+        <p id="reportModalText"></p>
+
+        <div class="modal-actions">
+
+            <button
+                class="btn btn-primary"
+                onclick="closeModal('reportModal')">
+                Done
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= TOAST ================= -->
+
+<div class="toast-container" id="toastContainer"></div>
+
+
+<script>
+
+/* =========================================================
+   LOCAL EMERGENCY HUB
+   VANILLA JAVASCRIPT
+   ========================================================= */
+
+
+/* ================= DEMO INCIDENT DATA ================= */
+
+const demoIncidents = [
+
+    {
+        id: "EMG-001",
+        type: "Road Accident",
+        location: "Main Junction",
+        time: "18:42",
+        severity: "Critical",
+        status: "Active"
+    },
+
+    {
+        id: "EMG-002",
+        type: "Fire",
+        location: "Market Area",
+        time: "18:30",
+        severity: "High",
+        status: "Active"
+    },
+
+    {
+        id: "EMG-003",
+        type: "Medical Emergency",
+        location: "Railway Station",
+        time: "18:20",
+        severity: "Medium",
+        status: "Active"
+    },
+
+    {
+        id: "EMG-004",
+        type: "Flood",
+        location: "Residential Area",
+        time: "17:50",
+        severity: "High",
+        status: "Resolved"
+    },
+
+    {
+        id: "EMG-005",
+        type: "Hazard",
+        location: "Highway",
+        time: "17:15",
+        severity: "Low",
+        status: "Resolved"
+    }
+
+];
+
+
+/* ================= LOAD INCIDENTS ================= */
+
+function getIncidents() {
+
+    const stored = localStorage.getItem("localEmergencyIncidents");
+
+    if (stored) {
+
+        try {
+            return JSON.parse(stored);
+        }
+
+        catch(error) {
+            console.error("Could not load stored incidents.");
+        }
+
+    }
+
+    return [...demoIncidents];
+
+}
+
+
+/* ================= SAVE INCIDENTS ================= */
+
+function saveIncidents(incidents) {
+
+    localStorage.setItem(
+        "localEmergencyIncidents",
+        JSON.stringify(incidents)
+    );
+
+}
+
+
+/* ================= RENDER INCIDENTS ================= */
+
+function renderIncidents(filter = "all") {
+
+    const table = document.getElementById("incidentTable");
+
+    let incidents = getIncidents();
+
+    if (filter !== "all") {
+
+        incidents = incidents.filter(incident => {
+
+            return incident.severity === filter ||
+                   incident.status === filter;
+
+        });
+
+    }
+
+    table.innerHTML = "";
+
+    if (incidents.length === 0) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align:center;padding:30px;">
+                    No incidents found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    incidents.forEach(incident => {
+
+        const row = document.createElement("tr");
+
+        const severityClass =
+            incident.severity.toLowerCase();
+
+        const statusClass =
+            incident.status.toLowerCase() === "resolved"
+            ? "badge-resolved"
+            : "badge-active";
+
+
+        row.innerHTML = `
+
+            <td>
+                <strong>${escapeHTML(incident.id)}</strong>
+            </td>
+
+            <td>
+                ${escapeHTML(incident.type)}
+            </td>
+
+            <td>
+                ${escapeHTML(incident.location)}
+            </td>
+
+            <td>
+                ${escapeHTML(incident.time)}
+            </td>
+
+            <td>
+                <span class="badge badge-${severityClass}">
+                    ${escapeHTML(incident.severity)}
+                </span>
+            </td>
+
+            <td>
+                <span class="badge ${statusClass}">
+                    ${escapeHTML(incident.status)}
+                </span>
+            </td>
+
+        `;
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* ================= HTML ESCAPE ================= */
+
+function escapeHTML(value) {
+
+    const div = document.createElement("div");
+
+    div.textContent = value ?? "";
+
+    return div.innerHTML;
+
+}
+
+
+/* ================= FILTER ================= */
+
+function filterIncidents(filter, button) {
+
+    document
+        .querySelectorAll(".filter-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    renderIncidents(filter);
+
+}
+
+
+/* ================= SCROLL ================= */
+
+function scrollToSection(id) {
+
+    const element = document.getElementById(id);
+
+    if (element) {
+
+        element.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+
+/* ================= MODAL ================= */
+
+function openModal(id) {
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+}
+
+
+function closeModal(id) {
+
+    document
+        .getElementById(id)
+        .classList.remove("active");
+
+}
+
+
+/* ================= SOS ================= */
+
+function openSOSModal() {
+
+    openModal("sosModal");
+
+}
+
+
+function activateSOS() {
+
+    closeModal("sosModal");
+
+    showToast(
+        "SOS activation started. Capturing location...",
+        "success"
+    );
+
+    if (!navigator.geolocation) {
+
+        showToast(
+            "Geolocation is not supported by this browser.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude =
+                position.coords.latitude.toFixed(6);
+
+            const longitude =
+                position.coords.longitude.toFixed(6);
+
+
+            updateLocation(
+                latitude,
+                longitude
+            );
+
+
+            showToast(
+                "SOS Activated — Emergency location captured.",
+                "success"
+            );
+
+        },
+
+        function(error) {
+
+            console.error(error);
+
+            showToast(
+                "SOS activated, but location permission was unavailable.",
+                "error"
+            );
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
+    );
+
+}
+
+
+/* ================= LOCATION ================= */
+
+function getLocation() {
+
+    if (!navigator.geolocation) {
+
+        showToast(
+            "Geolocation is not supported by this browser.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    showToast(
+        "Requesting your location...",
+        "success"
+    );
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude =
+                position.coords.latitude.toFixed(6);
+
+            const longitude =
+                position.coords.longitude.toFixed(6);
+
+
+            updateLocation(
+                latitude,
+                longitude
+            );
+
+        },
+
+        function(error) {
+
+            console.error(error);
+
+            let message =
+                "Unable to retrieve your location.";
+
+            if (error.code === 1) {
+
+                message =
+                    "Location permission was denied. Please allow location access.";
+
+            }
+
+            else if (error.code === 2) {
+
+                message =
+                    "Location information is unavailable.";
+
+            }
+
+            else if (error.code === 3) {
+
+                message =
+                    "Location request timed out.";
+
+            }
+
+
+            showToast(
+                message,
+                "error"
+            );
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
+    );
+
+}
+
+
+/* ================= UPDATE LOCATION ================= */
+
+function updateLocation(latitude, longitude) {
+
+    document.getElementById("locationText").textContent =
+        `Latitude: ${latitude} | Longitude: ${longitude}`;
+
+    document.getElementById("locationStatus").textContent =
+        "✓ Location Captured";
+
+    showToast(
+        "Your current location has been captured.",
+        "success"
+    );
+
+}
+
+
+/* ================= FORM LOCATION ================= */
+
+function useFormLocation() {
+
+    if (!navigator.geolocation) {
+
+        showToast(
+            "Geolocation is not supported.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    showToast(
+        "Getting your location...",
+        "success"
+    );
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude =
+                position.coords.latitude.toFixed(6);
+
+            const longitude =
+                position.coords.longitude.toFixed(6);
+
+
+            document.getElementById("reportLocation").value =
+                `GPS: ${latitude}, ${longitude}`;
+
+
+            updateLocation(
+                latitude,
+                longitude
+            );
+
+        },
+
+        function() {
+
+            showToast(
+                "Could not access your location.",
+                "error"
+            );
+
+        }
+
+    );
+
+}
+
+
+/* ================= INCIDENT ID ================= */
+
+function generateIncidentID() {
+
+    const year =
+        new Date().getFullYear();
+
+    const incidents =
+        getIncidents();
+
+    const number =
+        incidents.length + 1;
+
+    return `EMG-${year}-${String(number).padStart(3, "0")}`;
+
+}
+
+
+/* ================= CURRENT TIME ================= */
+
+function getCurrentTime() {
+
+    const now = new Date();
+
+    return now.toLocaleTimeString(
+        [],
+        {
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+/* ================= REPORT FORM ================= */
+
+document
+    .getElementById("emergencyForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+
+        const type =
+            document.getElementById("emergencyType").value;
+
+        const severity =
+            document.getElementById("severity").value;
+
+        const location =
+            document.getElementById("reportLocation").value.trim();
+
+        const description =
+            document.getElementById("description").value.trim();
+
+        const people =
+            document.getElementById("people").value;
+
+        const reporter =
+            document.getElementById("reporter").value.trim();
+
+        const phone =
+            document.getElementById("phone").value.trim();
+
+
+        if (
+            !type ||
+            !severity ||
+            !location ||
+            !description ||
+            !people
+        ) {
+
+            showToast(
+                "Please complete all required fields.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const incident = {
+
+            id: generateIncidentID(),
+
+            type: type,
+
+            location: location,
+
+            time: getCurrentTime(),
+
+            severity: severity,
+
+            status: "Active",
+
+            description: description,
+
+            people: Number(people),
+
+            reporter: reporter,
+
+            phone: phone
+
+        };
+
+
+        const incidents =
+            getIncidents();
+
+
+        incidents.unshift(incident);
+
+
+        saveIncidents(incidents);
+
+
+        renderIncidents();
+
+
+        document.getElementById("reportModalText").innerHTML = `
+
+            <strong>${escapeHTML(incident.id)}</strong>
+            has been created successfully.
+
+            <br><br>
+
+            Emergency:
+            <strong>${escapeHTML(type)}</strong>
+
+            <br>
+
+            Location:
+            <strong>${escapeHTML(location)}</strong>
+
+            <br>
+
+            Severity:
+            <strong>${escapeHTML(severity)}</strong>
+
+            <br><br>
+
+            <span style="color:#dc2626;">
+                Prototype only — this report has not been
+                transmitted to an actual emergency service.
+            </span>
+
+        `;
+
+
+        openModal("reportModal");
+
+
+        showToast(
+            `Emergency report ${incident.id} created.`,
+            "success"
+        );
+
+
+        this.reset();
+
+
+        document
+            .getElementById("incidents")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    });
+
+
+/* ================= MAP MARKER ================= */
+
+function showMarker(
+    marker,
+    type,
+    location,
+    severity,
+    status
+) {
+
+    const popup =
+        document.getElementById("markerPopup");
+
+
+    const map =
+        document.getElementById("incidentMap");
+
+
+    popup.innerHTML = `
+
+        <strong>${type}</strong>
+
+        <div>
+            📍 ${location}
+        </div>
+
+        <div>
+            ⚠️ Severity:
+            <strong>${severity}</strong>
+        </div>
+
+        <div>
+            📊 Status:
+            ${status}
+        </div>
+
+        <div style="
+            margin-top:7px;
+            color:#ea580c;
+            font-size:0.7rem;
+            font-weight:700;
+        ">
+            DEMO DATA
+        </div>
+
+    `;
+
+
+    const markerRect =
+        marker.getBoundingClientRect();
+
+    const mapRect =
+        map.getBoundingClientRect();
+
+
+    let left =
+        markerRect.left -
+        mapRect.left +
+        35;
+
+    let top =
+        markerRect.top -
+        mapRect.top -
+        10;
+
+
+    if (left > map.clientWidth - 240) {
+
+        left -= 220;
+
+    }
+
+
+    if (top < 10) {
+
+        top += 50;
+
+    }
+
+
+    popup.style.left =
+        `${left}px`;
+
+    popup.style.top =
+        `${top}px`;
+
+    popup.classList.add("active");
+
+}
+
+
+/* ================= CLOSE MAP POPUP ================= */
+
+document
+    .getElementById("incidentMap")
+    .addEventListener("click", function(event) {
+
+        if (!event.target.closest(".marker")) {
+
+            document
+                .getElementById("markerPopup")
+                .classList.remove("active");
+
+        }
+
+    });
+
+
+/* ================= TOAST ================= */
+
+function showToast(message, type = "success") {
+
+    const container =
+        document.getElementById("toastContainer");
+
+
+    const toast =
+        document.createElement("div");
+
+
+    toast.className =
+        `toast ${type}`;
+
+
+    toast.textContent =
+        message;
+
+
+    container.appendChild(toast);
+
+
+    setTimeout(() => {
+
+        toast.style.opacity = "0";
+
+        toast.style.transform =
+            "translateX(30px)";
+
+        setTimeout(() => {
+
+            toast.remove();
+
+        }, 250);
+
+    }, 3500);
+
+}
+
+
+/* ================= ESC KEY ================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            document
+                .querySelectorAll(".modal-overlay")
+                .forEach(modal => {
+
+                    modal.classList.remove("active");
+
+                });
+
+            document
+                .getElementById("markerPopup")
+                .classList.remove("active");
+
+        }
+
+    }
+);
+
+
+/* ================= CLOSE MODAL ON BACKDROP ================= */
+
+document
+    .querySelectorAll(".modal-overlay")
+    .forEach(modal => {
+
+        modal.addEventListener(
+            "click",
+            function(event) {
+
+                if (event.target === modal) {
+
+                    modal.classList.remove("active");
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* ================= INITIALIZE ================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        /*
+            We intentionally initialize only once.
+            Existing localStorage data remains available.
+        */
+
+        if (
+            !localStorage.getItem(
+                "localEmergencyIncidents"
+            )
+        ) {
+
+            saveIncidents(
+                demoIncidents
+            );
+
+        }
+
+
+        renderIncidents();
+
+
+        /*
+            Small welcome notification.
+        */
+
+        setTimeout(() => {
+
+            showToast(
+                "Local Emergency Hub is ready.",
+                "success"
+            );
+
+        }, 700);
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+```
